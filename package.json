@@ -1,6 +1,6 @@
 {
   "name": "@msgcore/sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official TypeScript SDK for MsgCore universal messaging gateway",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,10 +27,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/filipexyz/msgcore-sdk.git"
+    "url": "https://github.com/msgcore/msgcore-sdk.git"
   },
-  "homepage": "https://github.com/filipexyz/msgcore-sdk",
+  "homepage": "https://github.com/msgcore/msgcore-sdk",
   "bugs": {
-    "url": "https://github.com/filipexyz/msgcore-sdk/issues"
+    "url": "https://github.com/msgcore/msgcore-sdk/issues"
   }
 }
