@@ -53,8 +53,8 @@ import {
   WebhookDeliveryListResponse,
   WebhookDetailResponse,
   WebhookResponse
-} from './types';
-import { MsgCoreError, AuthenticationError, RateLimitError } from './errors';
+} from './types.js';
+import { MsgCoreError, AuthenticationError, RateLimitError } from './errors.js';
 
 class ApikeysAPI {
   constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
@@ -468,7 +468,12 @@ export class MsgCore {
       this.client.interceptors.request.use((axiosConfig) => {
         const token = config.getToken!();
         if (token) {
-          axiosConfig.headers.Authorization = `Bearer ${token}`;
+          // Detect API keys (start with msc_) and use correct header
+          if (token.startsWith('msc_')) {
+            axiosConfig.headers['X-API-Key'] = token;
+          } else {
+            axiosConfig.headers.Authorization = `Bearer ${token}`;
+          }
         }
         return axiosConfig;
       });
