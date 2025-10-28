@@ -106,6 +106,7 @@ export interface CreateInviteDto {
 
 export interface CreatePlatformDto {
   platform: PlatformType;
+  id?: string;
   name: string;
   description?: string;
   credentials: Record<string, any>;
@@ -383,7 +384,6 @@ export interface ProjectResponse {
 export type ProjectRole = 'owner' | 'admin' | 'member' | 'viewer';
 
 export interface QueryMessagesDto {
-  platform?: string;
   platformId?: string;
   chatId?: string;
   userId?: string;
@@ -394,6 +394,14 @@ export interface QueryMessagesDto {
   order?: 'asc' | 'desc';
   raw?: boolean;
   reactions?: boolean;
+}
+
+export interface QuickLinkDto {
+  platformId: string;
+  providerUserId: string;
+  providerUserDisplay?: string;
+  displayName?: string;
+  email?: string;
 }
 
 export interface ReceivedMessageResponse {

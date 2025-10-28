@@ -34,6 +34,7 @@ import {
   ProjectMemberResponse,
   ProjectResponse,
   QueryMessagesDto,
+  QuickLinkDto,
   ReceivedMessageResponse,
   ReceivedReactionResponse,
   SendMessageDto,
@@ -133,13 +134,27 @@ class IdentitiesAPI {
     return response.data;
   }
 
-  async lookup(options?: { project?: string }): Promise<IdentityResponse> {
-    const response = await this.client.get<IdentityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/lookup`);
+  async search(options: Record<string, any> & { project?: string }): Promise<IdentityResponse[]> {
+    const { project, ...data } = options;
+    const response = await this.client.get<IdentityResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/search`, { params: data });
     return response.data;
   }
 
-  async get(id: string, options?: { project?: string }): Promise<IdentityResponse> {
-    const response = await this.client.get<IdentityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}`);
+  async quickLink(options: QuickLinkDto & { project?: string }): Promise<IdentityResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.post<IdentityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/quick-link`, data);
+    return response.data;
+  }
+
+  async lookup(options: Record<string, any> & { project?: string }): Promise<IdentityResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<IdentityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/lookup`, { params: data });
+    return response.data;
+  }
+
+  async get(id: string, options: Record<string, any> & { project?: string }): Promise<IdentityResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<IdentityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}`, { params: data });
     return response.data;
   }
 
@@ -165,13 +180,15 @@ class IdentitiesAPI {
     return response.data;
   }
 
-  async messages(id: string, options?: { project?: string }): Promise<ReceivedMessageResponse[]> {
-    const response = await this.client.get<ReceivedMessageResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}/messages`);
+  async messages(id: string, options: Record<string, any> & { project?: string }): Promise<ReceivedMessageResponse[]> {
+    const { project, ...data } = options;
+    const response = await this.client.get<ReceivedMessageResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}/messages`, { params: data });
     return response.data;
   }
 
-  async reactions(id: string, options?: { project?: string }): Promise<ReceivedReactionResponse[]> {
-    const response = await this.client.get<ReceivedReactionResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}/reactions`);
+  async reactions(id: string, options: Record<string, any> & { project?: string }): Promise<ReceivedReactionResponse[]> {
+    const { project, ...data } = options;
+    const response = await this.client.get<ReceivedReactionResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/identities/${id}/reactions`, { params: data });
     return response.data;
   }
 }
@@ -222,13 +239,15 @@ class MessagesAPI {
     return response.data;
   }
 
-  async sent(options?: { project?: string }): Promise<SentMessageListResponse> {
-    const response = await this.client.get<SentMessageListResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/sent`);
+  async sent(options: Record<string, any> & { project?: string }): Promise<SentMessageListResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<SentMessageListResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/sent`, { params: data });
     return response.data;
   }
 
-  async get(messageId: string, options?: { project?: string }): Promise<ReceivedMessageResponse> {
-    const response = await this.client.get<ReceivedMessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/${messageId}`);
+  async get(messageId: string, options: Record<string, any> & { project?: string }): Promise<ReceivedMessageResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<ReceivedMessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/${messageId}`, { params: data });
     return response.data;
   }
 
@@ -243,8 +262,9 @@ class MessagesAPI {
     return response.data;
   }
 
-  async status(jobId: string, options?: { project?: string }): Promise<MessageStatusResponse> {
-    const response = await this.client.get<MessageStatusResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/status/${jobId}`);
+  async status(jobId: string, options: Record<string, any> & { project?: string }): Promise<MessageStatusResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<MessageStatusResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/status/${jobId}`, { params: data });
     return response.data;
   }
 
@@ -269,13 +289,15 @@ class MessagesAPI {
 class PlatformLogsAPI {
   constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
 
-  async list(options?: { project?: string }): Promise<PlatformLogsResponse> {
-    const response = await this.client.get<PlatformLogsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/logs`);
+  async list(options: Record<string, any> & { project?: string }): Promise<PlatformLogsResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<PlatformLogsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/logs`, { params: data });
     return response.data;
   }
 
-  async get(platformId: string, options?: { project?: string }): Promise<PlatformLogsResponse> {
-    const response = await this.client.get<PlatformLogsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${platformId}/logs`);
+  async get(platformId: string, options: Record<string, any> & { project?: string }): Promise<PlatformLogsResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<PlatformLogsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${platformId}/logs`, { params: data });
     return response.data;
   }
 
@@ -299,8 +321,9 @@ class PlatformsAPI {
     return response.data;
   }
 
-  async get(id: string, options?: { project?: string }): Promise<PlatformResponse> {
-    const response = await this.client.get<PlatformResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${id}`);
+  async get(id: string, options: Record<string, any> & { project?: string }): Promise<PlatformResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<PlatformResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${id}`, { params: data });
     return response.data;
   }
 
@@ -320,8 +343,9 @@ class PlatformsAPI {
     return response.data;
   }
 
-  async qrCode(id: string, options?: { project?: string }): Promise<MessageResponse> {
-    const response = await this.client.get<MessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${id}/qr-code`);
+  async qrCode(id: string, options: Record<string, any> & { project?: string }): Promise<MessageResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<MessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/platforms/${id}/qr-code`, { params: data });
     return response.data;
   }
 
@@ -376,8 +400,9 @@ class WebhooksAPI {
     return response.data;
   }
 
-  async get(webhookId: string, options?: { project?: string }): Promise<WebhookDetailResponse> {
-    const response = await this.client.get<WebhookDetailResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/webhooks/${webhookId}`);
+  async get(webhookId: string, options: Record<string, any> & { project?: string }): Promise<WebhookDetailResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<WebhookDetailResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/webhooks/${webhookId}`, { params: data });
     return response.data;
   }
 
@@ -392,8 +417,9 @@ class WebhooksAPI {
     return response.data;
   }
 
-  async deliveries(webhookId: string, options?: { project?: string }): Promise<WebhookDeliveryListResponse> {
-    const response = await this.client.get<WebhookDeliveryListResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/webhooks/${webhookId}/deliveries`);
+  async deliveries(webhookId: string, options: Record<string, any> & { project?: string }): Promise<WebhookDeliveryListResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<WebhookDeliveryListResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/webhooks/${webhookId}/deliveries`, { params: data });
     return response.data;
   }
 }
