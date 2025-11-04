@@ -15,13 +15,14 @@ npm install @msgcore/sdk
 ```typescript
 import { MsgCore } from '@msgcore/sdk';
 
-const gk = new MsgCore({
+const msc = new MsgCore({
   apiUrl: 'https://api.msgcore.dev',
   apiKey: 'msc_live_your_api_key_here',
+  defaultProject: 'my-project', // optional: sets default project for all operations
 });
 
 // Send a message
-const result = await gk.messages.send({
+const result = await msc.messages.send({
   targets: [{ platformId: 'platform-id', type: 'user', id: '123' }],
   content: { text: 'Hello from MsgCore!' },
 });
@@ -42,13 +43,13 @@ const result = await gk.messages.send({
 ### List all extracted entities for a project with pagination and sorting
 ```typescript
 // Usage example
-await gk.analysisEntities.list();
+await msc.analysisEntities.list();
 ```
 
 ### Get a specific extracted entity by ID
 ```typescript
 // Usage example
-await gk.analysisEntities.get('id');
+await msc.analysisEntities.get('id');
 ```
 
 ## Analysis / Models
@@ -56,7 +57,7 @@ await gk.analysisEntities.get('id');
 ### List available LLM models from OpenRouter for analysis
 ```typescript
 // Get all supported models
-await gk.analysisModels.list();
+await msc.analysisModels.list();
 ```
 
 ## Analysis / Profiles
@@ -64,27 +65,27 @@ await gk.analysisModels.list();
 ### Create a new analysis profile (versioned pipeline)
 ```typescript
 // Create an analysis profile
-await gk.analysisProfiles.create(data);
+await msc.analysisProfiles.create(data);
 ```
 
 ### List all analysis profiles for a project
 ```typescript
 // List all profiles
-await gk.analysisProfiles.list();
+await msc.analysisProfiles.list();
 ```
 
 ## Analysis / Runs
 
 ### Execute an analysis run with a profile
 ```typescript
-// Run analysis on specific messages
-await gk.analysisRuns.create(data);
+// Run analysis on specific chats
+await msc.analysisRuns.create(data);
 ```
 
 ### Get analysis run statistics for a project
 ```typescript
 // Get run statistics
-await gk.analysisRuns.stats();
+await msc.analysisRuns.stats();
 ```
 
 ## Analysis / Schemas
@@ -92,13 +93,13 @@ await gk.analysisRuns.stats();
 ### Create a new entity schema for custom extraction
 ```typescript
 // Create a sentiment analysis schema
-await gk.analysisSchemas.create(data);
+await msc.analysisSchemas.create(data);
 ```
 
 ### List all entity schemas for a project
 ```typescript
 // List all entity schemas
-await gk.analysisSchemas.list();
+await msc.analysisSchemas.list();
 ```
 
 ## ApiKeys
@@ -106,13 +107,13 @@ await gk.analysisSchemas.list();
 ### Generate a new API key
 ```typescript
 // Create messaging API key
-await gk.apikeys.create(data);
+await msc.apikeys.create(data);
 ```
 
 ### List all API keys for project
 ```typescript
 // List all API keys
-await gk.apikeys.list();
+await msc.apikeys.list();
 ```
 
 ## Auth
@@ -120,13 +121,13 @@ await gk.apikeys.list();
 ### Create a new user account (first user becomes admin)
 ```typescript
 // Create first admin user
-await gk.auth.signup(data);
+await msc.auth.signup(data);
 ```
 
 ### Login with email and password
 ```typescript
 // Login with email and password
-await gk.auth.login(data);
+await msc.auth.login(data);
 ```
 
 ## Chats
@@ -134,13 +135,13 @@ await gk.auth.login(data);
 ### List all chats for a project with filtering and pagination
 ```typescript
 // Usage example
-await gk.chats.list(data);
+await msc.chats.list(data);
 ```
 
 ### Get details of a specific chat
 ```typescript
 // Usage example
-await gk.chats.get('chatId');
+await msc.chats.get('chatId');
 ```
 
 ## Identities
@@ -148,13 +149,13 @@ await gk.chats.get('chatId');
 ### Create a new identity with platform aliases
 ```typescript
 // Create identity with Discord and Telegram aliases
-await gk.identities.create(data);
+await msc.identities.create(data);
 ```
 
 ### List all identities for a project
 ```typescript
 // List all identities
-await gk.identities.list();
+await msc.identities.list();
 ```
 
 ## Members
@@ -162,13 +163,13 @@ await gk.identities.list();
 ### List all members of a project
 ```typescript
 // List all project members
-await gk.members.list();
+await msc.members.list();
 ```
 
 ### Add a member to a project
 ```typescript
 // Add a member with admin role
-await gk.members.add(data);
+await msc.members.add(data);
 ```
 
 ## Messages
@@ -176,13 +177,13 @@ await gk.members.add(data);
 ### List messages for a project (sent and received)
 ```typescript
 // Get all messages (sent + received)
-await gk.messages.list(data);
+await msc.messages.list(data);
 ```
 
 ### Get message statistics for a project
 ```typescript
 // Get message statistics
-await gk.messages.stats();
+await msc.messages.stats();
 ```
 
 ## Platform Logs
@@ -190,13 +191,13 @@ await gk.messages.stats();
 ### List platform processing logs for a project
 ```typescript
 // List recent platform logs
-await gk.platformLogs.list();
+await msc.platformLogs.list();
 ```
 
 ### List logs for a specific platform configuration
 ```typescript
 // List logs for specific platform
-await gk.platformLogs.get('platformId');
+await msc.platformLogs.get('platformId');
 ```
 
 ## Platforms
@@ -204,13 +205,13 @@ await gk.platformLogs.get('platformId');
 ### Configure a new platform integration
 ```typescript
 // Add Discord bot
-await gk.platforms.create(data);
+await msc.platforms.create(data);
 ```
 
 ### List configured platforms for project
 ```typescript
 // List all platforms
-await gk.platforms.list();
+await msc.platforms.list();
 ```
 
 ## Projects
@@ -218,13 +219,13 @@ await gk.platforms.list();
 ### Create a new project
 ```typescript
 // Create a simple project
-await gk.projects.create(data);
+await msc.projects.create(data);
 ```
 
 ### List all projects
 ```typescript
 // List all projects
-await gk.projects.list();
+await msc.projects.list();
 ```
 
 ## Webhooks
@@ -232,13 +233,13 @@ await gk.projects.list();
 ### Create a new webhook for event notifications
 ```typescript
 // Create webhook for all message events
-await gk.webhooks.create(data);
+await msc.webhooks.create(data);
 ```
 
 ### List all webhooks for a project
 ```typescript
 // List all webhooks
-await gk.webhooks.list();
+await msc.webhooks.list();
 ```
 
 ## Authentication
@@ -246,7 +247,7 @@ await gk.webhooks.list();
 ### API Key (Recommended)
 
 ```typescript
-const gk = new MsgCore({
+const msc = new MsgCore({
   apiUrl: 'https://api.msgcore.dev',
   apiKey: 'msc_live_your_api_key_here',
   defaultProject: 'my-project', // optional
@@ -256,9 +257,10 @@ const gk = new MsgCore({
 ### JWT Token
 
 ```typescript
-const gk = new MsgCore({
+const msc = new MsgCore({
   apiUrl: 'https://api.msgcore.dev',
   jwtToken: 'your-jwt-token',
+  defaultProject: 'my-project', // optional
 });
 ```
 
@@ -268,7 +270,7 @@ const gk = new MsgCore({
 import { MsgCoreError, AuthenticationError, RateLimitError } from '@msgcore/sdk';
 
 try {
-  await gk.messages.send({ ... });
+  await msc.messages.send({ ... });
 } catch (error) {
   if (error instanceof AuthenticationError) {
     console.error('Invalid credentials');
