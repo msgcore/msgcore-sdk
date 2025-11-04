@@ -37,6 +37,70 @@ const result = await gk.messages.send({
 
 ## API Reference
 
+## Analysis / Entities
+
+### List all extracted entities for a project with pagination and sorting
+```typescript
+// Usage example
+await gk.analysisEntities.list();
+```
+
+### Get a specific extracted entity by ID
+```typescript
+// Usage example
+await gk.analysisEntities.get('id');
+```
+
+## Analysis / Models
+
+### List available LLM models from OpenRouter for analysis
+```typescript
+// Get all supported models
+await gk.analysisModels.list();
+```
+
+## Analysis / Profiles
+
+### Create a new analysis profile (versioned pipeline)
+```typescript
+// Create an analysis profile
+await gk.analysisProfiles.create(data);
+```
+
+### List all analysis profiles for a project
+```typescript
+// List all profiles
+await gk.analysisProfiles.list();
+```
+
+## Analysis / Runs
+
+### Execute an analysis run with a profile
+```typescript
+// Run analysis on specific messages
+await gk.analysisRuns.create(data);
+```
+
+### Get analysis run statistics for a project
+```typescript
+// Get run statistics
+await gk.analysisRuns.stats();
+```
+
+## Analysis / Schemas
+
+### Create a new entity schema for custom extraction
+```typescript
+// Create a sentiment analysis schema
+await gk.analysisSchemas.create(data);
+```
+
+### List all entity schemas for a project
+```typescript
+// List all entity schemas
+await gk.analysisSchemas.list();
+```
+
 ## ApiKeys
 
 ### Generate a new API key
@@ -63,6 +127,20 @@ await gk.auth.signup(data);
 ```typescript
 // Login with email and password
 await gk.auth.login(data);
+```
+
+## Chats
+
+### List all chats for a project with filtering and pagination
+```typescript
+// Usage example
+await gk.chats.list(data);
+```
+
+### Get details of a specific chat
+```typescript
+// Usage example
+await gk.chats.get('chatId');
 ```
 
 ## Identities
@@ -95,9 +173,9 @@ await gk.members.add(data);
 
 ## Messages
 
-### List received messages for a project
+### List messages for a project (sent and received)
 ```typescript
-// Get latest 50 messages
+// Get all messages (sent + received)
 await gk.messages.list(data);
 ```
 

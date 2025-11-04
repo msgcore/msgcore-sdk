@@ -6,19 +6,28 @@ import {
   AcceptInviteDto,
   AddAliasDto,
   AddMemberDto,
+  AnalysisProfileResponse,
+  AnalysisRunResponse,
+  AnalysisStatsResponse,
   ApiKeyListResponse,
   ApiKeyResponse,
   ApiKeyRollResponse,
   AuthResponse,
+  CreateAnalysisProfileDto,
+  CreateAnalysisRunDto,
   CreateApiKeyDto,
+  CreateEntitySchemaDto,
   CreateIdentityDto,
   CreateInviteDto,
   CreatePlatformDto,
   CreateProjectDto,
   CreateWebhookDto,
+  EntitySchemaResponse,
+  ExtractedEntityResponse,
   IdentityAliasResponse,
   IdentityResponse,
   InviteResponse,
+  ListChatsDto,
   LoginDto,
   MessageListResponse,
   MessageResponse,
@@ -26,6 +35,7 @@ import {
   MessageSendResponse,
   MessageStatsResponse,
   MessageStatusResponse,
+  ModelResponse,
   MsgCoreConfig,
   PermissionResponse,
   PlatformLogStatsResponse,
@@ -39,9 +49,12 @@ import {
   ReceivedReactionResponse,
   SendMessageDto,
   SendReactionDto,
-  SentMessageListResponse,
   SignupDto,
   SupportedPlatformsResponse,
+  SyncHistoryDto,
+  UpdateAnalysisProfileDto,
+  UpdateChatDto,
+  UpdateEntitySchemaDto,
   UpdateIdentityDto,
   UpdateMemberRoleDto,
   UpdatePasswordDto,
@@ -55,6 +68,123 @@ import {
   WebhookResponse
 } from './types.js';
 import { MsgCoreError, AuthenticationError, RateLimitError } from './errors.js';
+
+class AnalysisEntitiesAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async list(options?: { project?: string }): Promise<ExtractedEntityResponse[]> {
+    const response = await this.client.get<ExtractedEntityResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/entities`);
+    return response.data;
+  }
+
+  async get(id: string, options?: { project?: string }): Promise<ExtractedEntityResponse> {
+    const response = await this.client.get<ExtractedEntityResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/entities/${id}`);
+    return response.data;
+  }
+}
+
+class AnalysisModelsAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async list(): Promise<ModelResponse[]> {
+    const response = await this.client.get<ModelResponse[]>(`/api/v1/analysis/models`);
+    return response.data;
+  }
+}
+
+class AnalysisProfilesAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async create(options: CreateAnalysisProfileDto & { project?: string }): Promise<AnalysisProfileResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.post<AnalysisProfileResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/profiles`, data);
+    return response.data;
+  }
+
+  async list(options?: { project?: string }): Promise<AnalysisProfileResponse[]> {
+    const response = await this.client.get<AnalysisProfileResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/profiles`);
+    return response.data;
+  }
+
+  async get(profileId: string, options?: { project?: string }): Promise<AnalysisProfileResponse> {
+    const response = await this.client.get<AnalysisProfileResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/profiles/${profileId}`);
+    return response.data;
+  }
+
+  async update(profileId: string, options: UpdateAnalysisProfileDto & { project?: string }): Promise<AnalysisProfileResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.patch<AnalysisProfileResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/profiles/${profileId}`, data);
+    return response.data;
+  }
+
+  async delete(profileId: string, options?: { project?: string }): Promise<MessageResponse> {
+    const response = await this.client.delete<MessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/profiles/${profileId}`);
+    return response.data;
+  }
+}
+
+class AnalysisRunsAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async create(options: CreateAnalysisRunDto & { project?: string }): Promise<AnalysisRunResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.post<AnalysisRunResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/runs`, data);
+    return response.data;
+  }
+
+  async stats(options?: { project?: string }): Promise<AnalysisStatsResponse> {
+    const response = await this.client.get<AnalysisStatsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/runs/stats`);
+    return response.data;
+  }
+
+  async list(options?: { project?: string }): Promise<AnalysisRunResponse[]> {
+    const response = await this.client.get<AnalysisRunResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/runs`);
+    return response.data;
+  }
+
+  async get(runId: string, options?: { project?: string }): Promise<AnalysisRunResponse> {
+    const response = await this.client.get<AnalysisRunResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/runs/${runId}`);
+    return response.data;
+  }
+
+  async cancel(runId: string, options?: { project?: string }): Promise<AnalysisRunResponse> {
+    const response = await this.client.post<AnalysisRunResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/runs/${runId}/cancel`);
+    return response.data;
+  }
+}
+
+class AnalysisSchemasAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async create(options: CreateEntitySchemaDto & { project?: string }): Promise<EntitySchemaResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.post<EntitySchemaResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/schemas/entities`, data);
+    return response.data;
+  }
+
+  async list(options: Record<string, any> & { project?: string }): Promise<EntitySchemaResponse[]> {
+    const { project, ...data } = options;
+    const response = await this.client.get<EntitySchemaResponse[]>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/schemas/entities`, { params: data });
+    return response.data;
+  }
+
+  async get(schemaId: string, options: Record<string, any> & { project?: string }): Promise<EntitySchemaResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.get<EntitySchemaResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/schemas/entities/${schemaId}`, { params: data });
+    return response.data;
+  }
+
+  async update(schemaId: string, options: UpdateEntitySchemaDto & { project?: string }): Promise<EntitySchemaResponse> {
+    const { project, ...data } = options;
+    const response = await this.client.patch<EntitySchemaResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/schemas/entities/${schemaId}`, data);
+    return response.data;
+  }
+
+  async delete(schemaId: string, options?: { project?: string }): Promise<MessageResponse> {
+    const response = await this.client.delete<MessageResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/analysis/schemas/entities/${schemaId}`);
+    return response.data;
+  }
+}
 
 class ApikeysAPI {
   constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
@@ -116,6 +246,46 @@ class AuthAPI {
   async updateProfile(options: UpdateProfileDto): Promise<UpdateProfileResponse> {
     const data = options;
     const response = await this.client.patch<UpdateProfileResponse>(`/api/v1/auth/profile`, data);
+    return response.data;
+  }
+}
+
+class ChatsAPI {
+  constructor(private client: AxiosInstance, private msgcore: MsgCore) {}
+
+  async list(options: ListChatsDto & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.get<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats`, { params: data });
+    return response.data;
+  }
+
+  async get(chatId: string, options: Record<string, any> & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.get<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats/${chatId}`, { params: data });
+    return response.data;
+  }
+
+  async messages(chatId: string, options: Record<string, any> & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.get<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats/${chatId}/messages`, { params: data });
+    return response.data;
+  }
+
+  async update(chatId: string, options: UpdateChatDto & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.patch<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats/${chatId}`, data);
+    return response.data;
+  }
+
+  async syncAll(options: SyncHistoryDto & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.post<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats/sync-all`, data);
+    return response.data;
+  }
+
+  async sync(chatId: string, options: SyncHistoryDto & { project?: string }): Promise<any> {
+    const { project, ...data } = options;
+    const response = await this.client.post<any>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/chats/${chatId}/sync`, data);
     return response.data;
   }
 }
@@ -236,12 +406,6 @@ class MessagesAPI {
 
   async stats(options?: { project?: string }): Promise<MessageStatsResponse> {
     const response = await this.client.get<MessageStatsResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/stats`);
-    return response.data;
-  }
-
-  async sent(options: Record<string, any> & { project?: string }): Promise<SentMessageListResponse> {
-    const { project, ...data } = options;
-    const response = await this.client.get<SentMessageListResponse>(`/api/v1/projects/${options?.project || this.msgcore.getDefaultProject() || ''}/messages/sent`, { params: data });
     return response.data;
   }
 
@@ -429,8 +593,14 @@ export class MsgCore {
   private defaultProject?: string;
 
   // API group instances
+  readonly analysisEntities: AnalysisEntitiesAPI;
+  readonly analysisModels: AnalysisModelsAPI;
+  readonly analysisProfiles: AnalysisProfilesAPI;
+  readonly analysisRuns: AnalysisRunsAPI;
+  readonly analysisSchemas: AnalysisSchemasAPI;
   readonly apikeys: ApikeysAPI;
   readonly auth: AuthAPI;
+  readonly chats: ChatsAPI;
   readonly identities: IdentitiesAPI;
   readonly members: MembersAPI;
   readonly messages: MessagesAPI;
@@ -451,8 +621,14 @@ export class MsgCore {
     this.setupErrorHandling();
 
     // Initialize API groups after client is ready
+    this.analysisEntities = new AnalysisEntitiesAPI(this.client, this);
+    this.analysisModels = new AnalysisModelsAPI(this.client, this);
+    this.analysisProfiles = new AnalysisProfilesAPI(this.client, this);
+    this.analysisRuns = new AnalysisRunsAPI(this.client, this);
+    this.analysisSchemas = new AnalysisSchemasAPI(this.client, this);
     this.apikeys = new ApikeysAPI(this.client, this);
     this.auth = new AuthAPI(this.client, this);
+    this.chats = new ChatsAPI(this.client, this);
     this.identities = new IdentitiesAPI(this.client, this);
     this.members = new MembersAPI(this.client, this);
     this.messages = new MessagesAPI(this.client, this);

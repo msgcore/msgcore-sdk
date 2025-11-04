@@ -18,6 +18,55 @@ export interface AddMemberDto {
   role: ProjectRole;
 }
 
+export interface AnalysisProfileResponse {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string;
+  version: number;
+  graphDefinition: Record<string, any>;
+  entitySchemaIds: string[];
+  storeEntities: boolean;
+  generateTags: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AnalysisRunResponse {
+  id: string;
+  projectId: string;
+  profileId: string;
+  profileVersion: number;
+  chatIds?: string[];
+  identityIds?: string[];
+  dateRangeStart?: Date;
+  dateRangeEnd?: Date;
+  status: string;
+  progress: number;
+  entitiesExtracted: number;
+  errorMessage?: string;
+  tokensUsed?: number;
+  estimatedCostUsd?: number;
+  startedAt?: Date;
+  completedAt?: Date;
+  createdAt: Date;
+}
+
+export interface AnalysisStatsResponse {
+  totalRuns: number;
+  runsByStatus: {
+    pending: number;
+    running: number;
+    completed: number;
+    failed: number;
+    cancelled: number;
+  };
+  totalEntitiesExtracted: number;
+  totalTokensUsed: number;
+  totalEstimatedCostUsd: number;
+}
+
 export interface ApiKeyListResponse {
   id: string;
   name: string;
@@ -76,6 +125,8 @@ export interface ButtonDto {
 
 export type ButtonStyle = 'primary' | 'secondary' | 'success' | 'danger' | 'link';
 
+export type ChatType = 'individual' | 'group' | 'channel';
+
 export interface ContentDto {
   subject?: string;
   text?: string;
@@ -87,10 +138,39 @@ export interface ContentDto {
   platformOptions?: Record<string, any>;
 }
 
+export interface CreateAnalysisProfileDto {
+  name: string;
+  description?: string;
+  version?: number;
+  graphDefinition: Record<string, any>;
+  entitySchemaIds: string[];
+  storeEntities?: boolean;
+  generateTags?: boolean;
+}
+
+export interface CreateAnalysisRunDto {
+  profileId: string;
+  chatIds?: string[];
+  identityIds?: string[];
+  dateRangeStart?: string;
+  dateRangeEnd?: string;
+}
+
 export interface CreateApiKeyDto {
   name: string;
   scopes: string[];
   expiresInDays?: number;
+}
+
+export interface CreateEntitySchemaDto {
+  name: string;
+  description?: string;
+  extractionType: ExtractionType;
+  properties: Record<string, any>;
+  prompt?: string;
+  model?: string;
+  temperature?: number;
+  ruleDefinition?: Record<string, any>;
 }
 
 export interface CreateIdentityDto {
@@ -160,6 +240,40 @@ export interface EmbedFooterDto {
   iconUrl?: string;
 }
 
+export interface EntitySchemaResponse {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string;
+  extractionType: ExtractionType;
+  properties: Record<string, any>;
+  prompt?: string;
+  model?: string;
+  temperature?: number;
+  ruleDefinition?: Record<string, any>;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ExtractedEntityResponse {
+  id: string;
+  projectId: string;
+  entitySchemaId: string;
+  entitySchemaName: string;
+  runId: string;
+  profileVersion: number;
+  properties: Record<string, any>;
+  identityId: string | null;
+  chatId: string | null;
+  sourceMessageIds: string[];
+  isLatest: boolean;
+  confidence: number | null;
+  extractedAt: Date;
+}
+
+export type ExtractionType = 'llm_extraction' | 'rule_based' | 'api_logged';
+
 export interface IdentityAliasDto {
   platformId: string;
   providerUserId: string;
@@ -193,6 +307,14 @@ export interface InviteResponse {
   inviteLink: string;
   email: string;
   expiresAt: Date;
+}
+
+export interface ListChatsDto {
+  platformId?: string;
+  chatType?: ChatType;
+  limit?: number;
+  offset?: number;
+  search?: string;
 }
 
 export interface LoginDto {
@@ -269,6 +391,12 @@ export interface MetadataDto {
   trackingId?: string;
   tags?: string[];
   priority?: Priority;
+}
+
+export interface ModelResponse {
+  id: string;
+  name: string;
+  description?: string;
 }
 
 export interface OptionsDto {
@@ -394,6 +522,7 @@ export interface QueryMessagesDto {
   order?: 'asc' | 'desc';
   raw?: boolean;
   reactions?: boolean;
+  direction?: 'sent' | 'received';
 }
 
 export interface QuickLinkDto {
@@ -413,7 +542,9 @@ export interface ReceivedMessageResponse {
   userDisplay: string | null;
   messageText: string | null;
   messageType: string;
-  receivedAt: Date;
+  timestamp: Date;
+  direction: string;
+  source: string;
   rawData: any;
   platformConfig?: {
     id: string;
@@ -451,32 +582,6 @@ export interface SendReactionDto {
   emoji: string;
 }
 
-export interface SentMessageListResponse {
-  messages: SentMessageResponse[];
-  pagination: {
-    total: number;
-    limit: number;
-    offset: number;
-    hasMore: boolean;
-  };
-}
-
-export interface SentMessageResponse {
-  id: string;
-  platform: string;
-  jobId: string | null;
-  providerMessageId: string | null;
-  targetChatId: string;
-  targetUserId: string | null;
-  targetType: string;
-  messageText: string | null;
-  messageContent: Record<string, unknown> | null;
-  status: string;
-  errorMessage: string | null;
-  sentAt: Date | null;
-  createdAt: Date;
-}
-
 export interface SignupDto {
   email: string;
   password: string;
@@ -505,13 +610,45 @@ export interface SupportedPlatformsResponse {
   }>;
 }
 
+export interface SyncHistoryDto {
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+}
+
 export interface TargetDto {
   platformId: string;
   type: TargetType;
   id: string;
 }
 
-export type TargetType = 'user' | 'channel' | 'group';
+export type TargetType = 'chat' | 'identity' | 'messages' | 'date_range';
+
+export interface UpdateAnalysisProfileDto {
+  name?: string;
+  description?: string;
+  graphDefinition?: Record<string, any>;
+  entitySchemaIds?: string[];
+  storeEntities?: boolean;
+  generateTags?: boolean;
+}
+
+export interface UpdateChatDto {
+  name?: string;
+  avatarUrl?: string;
+  metadata?: any;
+}
+
+export interface UpdateEntitySchemaDto {
+  name?: string;
+  description?: string;
+  extractionType?: 'llm_extraction' | 'rule_based' | 'api_logged';
+  properties?: Record<string, any>;
+  prompt?: string;
+  model?: string;
+  temperature?: number;
+  ruleDefinition?: Record<string, any>;
+}
 
 export interface UpdateIdentityDto {
   displayName?: string;
