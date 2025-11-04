@@ -125,7 +125,7 @@ export interface ButtonDto {
 
 export type ButtonStyle = 'primary' | 'secondary' | 'success' | 'danger' | 'link';
 
-export type ChatType = 'individual' | 'group' | 'channel';
+export type ChatType = 'user' | 'group' | 'channel';
 
 export interface ContentDto {
   subject?: string;
@@ -566,7 +566,7 @@ export interface ReceivedReactionResponse {
   emoji: string;
   reactionType: 'added' | 'removed';
   rawData: Record<string, any>;
-  receivedAt: Date;
+  timestamp: Date;
 }
 
 export interface SendMessageDto {
@@ -611,6 +611,7 @@ export interface SupportedPlatformsResponse {
 }
 
 export interface SyncHistoryDto {
+  platformId?: string;
   startDate?: string;
   endDate?: string;
   limit?: number;
